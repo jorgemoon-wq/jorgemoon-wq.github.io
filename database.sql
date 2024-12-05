@@ -1,0 +1,7 @@
+create database DBTIENDA;
+use DBTIENDA;
+CREATE TABLE carrito (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    precio DECIMAL(10, 2) NOT NULL
+);

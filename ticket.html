@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MJDSG - Ayuda y Soporte</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #ff9ac6, #ffb6c1, #ffc0cb, #ffe4e1);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .help-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            position: relative;
+        }
+
+        .help-title {
+            text-align: center;
+            color: #e6007e;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #e6007e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .download-btn:hover {
+            background-color: #ff3366;
+        }
+
+        .return-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .return-btn:hover {
+            background-color: #6a6a6a;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="help-container">
+        <h2 class="help-title">Generar Ticket de Soporte</h2>
+        <form id="ticketForm">
+            <div class="form-group">
+                <label for="name">Nombre Completo</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="issue-type">Tipo de Problema</label>
+                <select id="issue-type" name="issue-type" required>
+                    <option value="">Seleccione un tipo de problema</option>
+                    <option value="hardware">Problema de Hardware</option>
+                    <option value="software">Problema de Software</option>
+                    <option value="network">Problema de Red</option>
+                    <option value="other">Otro</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Descripción del Problema</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            
+            <button type="submit" class="download-btn">Generar Ticket de Soporte</button>
+            <button type="button" id="return-btn" class="return-btn">Regresar a Inicio</button>
+        </form>
+        <div id="error-message" class="error-message">
+            Por favor complete todos los campos correctamente.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ticketForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            const form = e.target;
+            const errorMessage = document.getElementById('error-message');
+            
+            if (form.checkValidity()) {
+                // Hide any previous error messages
+                errorMessage.style.display = 'none';
+                
+                // Get form values
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const issueType = document.getElementById('issue-type').value;
+                const description = document.getElementById('description').value;
+                
+                // Generate PDF using jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add logo or company name at the top
+                doc.setFontSize(20);
+                doc.setTextColor(230, 0, 126); // Pink color matching site theme
+                doc.text('MJDSG - Ticket de Soporte', 105, 20, { align: 'center' });
+                
+                // Add ticket details
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0); // Black color for text
+                
+                // Ticket Number (randomly generated)
+                const ticketNumber = 'MJDSG-' + Math.floor(Math.random() * 10000);
+                doc.text(`Número de Ticket: ${ticketNumber}`, 20, 40);
+                
+                // Date of ticket generation
+                const today = new Date();
+                doc.text(`Fecha: ${today.toLocaleDateString()}`, 20, 50);
+                
+                // User Details
+                doc.text('Detalles del Cliente:', 20, 70);
+                doc.text(`Nombre: ${name}`, 20, 80);
+                doc.text(`Correo Electrónico: ${email}`, 20, 90);
+                doc.text(`Teléfono: ${phone}`, 20, 100);
+                
+                // Issue Details
+                doc.text('Detalles del Problema:', 20, 120);
+                doc.text(`Tipo de Problema: ${issueType}`, 20, 130);
+                
+                // Wrap description text
+                const splitDescription = doc.splitTextToSize(description, 170);
+                doc.text('Descripción:', 20, 140);
+                doc.text(splitDescription, 20, 150);
+                
+                // Add support information
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Para seguimiento, contacte a soporte@mjdsg.com', 105, 280, { align: 'center' });
+                
+                // Save the PDF
+                doc.save(`Ticket-Soporte-${ticketNumber}.pdf`);
+            } else {
+                // Show error message
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Add event listener for return to home button
+        document.getElementById('return-btn').addEventListener('click', function() {
+            // Redirect to home page (replace with actual home page URL)
+            window.location.href = 'file:///C:/Users/Jorge/Desktop/PAGINATIENDA/WEB-TIENDA/index.html';
+        });
+    </script>
+</body>
+</html>
